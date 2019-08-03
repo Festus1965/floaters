@@ -3,14 +3,15 @@
 -- Distributed under the LGPLv2.1 (https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html)
 
 
-local layers_mod
+local mod, layers_mod
 if minetest.get_modpath('realms') then
 	layers_mod = realms
+	mod = floaters
 else
 	layers_mod = mapgen
+	mod = mapgen
 end
 
-local mod = floaters
 local mod_name = mod.mod_name
 
 local falling = {}
@@ -126,12 +127,10 @@ function mod.generate_floaters(params)
 	local index = 1
 	for z = minp.z, maxp.z do
 		for x = minp.x, maxp.x do
-			--local height = heightmap[index]
 			local surface = params.share.surface[z][x]
 			local height = surface.top
 			local depth = surface.bottom
 			local biome = surface.biome or {}
-			--local biome = {}
 
 			-- depths
 			local depth_top = surface.top_depth or 0  -- 1?
