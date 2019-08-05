@@ -13,3 +13,4 @@ mod.path = minetest.get_modpath(minetest.get_current_modname())
 
 
 dofile(mod.path .. '/tg_floaters.lua')
+dofile(mod.path .. '/tg_dflat.lua')
