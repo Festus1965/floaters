@@ -50,6 +50,13 @@ function mod.generate_floaters(params)
 
 	local csize = vector.add(vector.subtract(maxp, minp), 1)
 
+	local ystride = area.ystride
+
+	local n_stone = node['default:stone']
+	local n_air = node['air']
+	local n_water = node['default:water_source']
+	local n_glass = node[mod_name..':airy_barrier']
+
 	local ps = PcgRandom(params.chunk_seed + 7712)
 
 	-- Find all falling nodes.
@@ -120,13 +127,6 @@ function mod.generate_floaters(params)
 			index = index + 1
 		end
 	end
-
-	local ystride = area.ystride
-
-	local n_stone = node['default:stone']
-	local n_air = node['air']
-	local n_water = node['default:water_source']
-	local n_glass = node[mod_name..':airy_barrier']
 
 	-- Let realms do the biomes.
 	params.share.surface=surface
@@ -223,12 +223,11 @@ function mod.generate_floaters(params)
 			end
 
 			-- Place water down to the bottom of the chunk.
-			--  Don't raise sea level above the lowest chunk or
-			--  hijinks will result.
 			if minp.y < water_level then
 				local ivm = area:index(x, minp.y, z)
-				for y = minp.y, water_level do
-					if y == minp.y then
+				local y_max = math.min(water_level, maxp.y)
+				for y = minp.y, y_max do
+					if y == params.realm_minp.y then
 						data[ivm] = n_glass
 						p2data[ivm] = 0
 					elseif data[ivm] == n_air then
@@ -247,6 +246,10 @@ function mod.generate_floaters(params)
 
 	if layers_mod.place_all_decorations then
 		layers_mod.place_all_decorations(params)
+
+		if not params.share.no_dust and layers_mod.dust then
+			layers_mod.dust(params)
+		end
 	end
 end
 
