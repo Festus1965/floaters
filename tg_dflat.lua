@@ -81,22 +81,23 @@ end
 
 
 function mod.ponds(params)
+	local minp, maxp = params.isect_minp, params.isect_maxp
 	local csize = params.csize
-	--[[
-	local humiditymap = params.humiditymap
-	if not (humiditymap and #humiditymap == csize.z * csize.x) then
-		return
-	end
 
 	local ahu = 0
-	for index = 1, csize.z * csize.x do
-		ahu = ahu + humiditymap[index]
+	for z = minp.z, maxp.z do
+		for x = minp.x, maxp.x do
+			if not params.share.surface[z][x].humidity then
+				ahu = 50 * csize.z * csize.x
+				break
+			end
+			ahu = ahu + params.share.surface[z][x].humidity
+		end
 	end
 	ahu = ahu / (csize.z * csize.x)
 	if ahu < 30 then
 		return
 	end
-	--]]
 
 	local n_air = node['air']
 	local n_water = node['default:water_source']
@@ -111,7 +112,6 @@ function mod.ponds(params)
 		['savanna'] = true,
 		['rainforest'] = true,
 	}
-	local minp, maxp = params.isect_minp, params.isect_maxp
 	local pond_min = params.sealevel + 12
 	local ps = PcgRandom(params.chunk_seed + 93)
 
